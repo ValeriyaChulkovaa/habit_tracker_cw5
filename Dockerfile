@@ -1,24 +1,27 @@
-# Используем официальный образ Python
+# Базовый образ
 FROM python:3.12-slim
 
-# Устанавливаем рабочую директорию в контейнере
+# Рабочая директория
 WORKDIR /app
 
-# Установка зависимостей
+# Установка системных зависимостей
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        python3-dev \
+        libpq-dev && \
     apt-get install -y postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-# Копируем файл с зависимостями и устанавливаем их
+# Копирование и установка Python-зависимостей
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-# Копируем остальные файлы проекта в контейнер
+# Копируем проект
 COPY . .
 
-# Открываем порт 8000 для взаимодействия с приложением
+# Скрипт будет запускаться отсюда
 EXPOSE 8000
 
-# Определяем команду для запуска приложения
+# Команда по умолчанию (заменится в docker-compose)
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
