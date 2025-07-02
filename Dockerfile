@@ -4,6 +4,12 @@ FROM python:3.12-slim
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /app
 
+# Установка зависимостей
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc && \
+    apt-get install -y postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
+
 # Копируем файл с зависимостями и устанавливаем их
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
